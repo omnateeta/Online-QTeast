@@ -30,7 +30,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // CORS configuration for production
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || "http://localhost:3000",
+  origin: process.env.FRONTEND_URL || true,
   credentials: true,
   optionsSuccessStatus: 200
 };
