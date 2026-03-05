@@ -6,6 +6,8 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 import { toast } from 'react-toastify';
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const Results = () => {
@@ -40,7 +42,7 @@ const Results = () => {
         try {
           // Fetch quiz attempt
           const response = await axios.get(
-            `http://localhost:5000/api/quizzes/attempt/${quizId}`,
+            `${API_BASE_URL}/api/quizzes/attempt/${quizId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -60,7 +62,7 @@ const Results = () => {
           if (response.data.quizAttempt.totalScore >= 50) {
             try {
               const certResponse = await axios.get(
-                `http://localhost:5000/api/certificates/quiz/${quizId}`,
+                `${API_BASE_URL}/api/certificates/quiz/${quizId}`,
                 {
                   headers: {
                     Authorization: `Bearer ${token}`,
@@ -86,7 +88,7 @@ const Results = () => {
       } catch (err) {
         setError(err.message);
         toast.error(err.message);
-        
+
         // Redirect to dashboard if quiz not found
         if (err.message.includes('not found')) {
           setTimeout(() => navigate('/dashboard'), 2000);
@@ -109,7 +111,7 @@ const Results = () => {
       const loadingToastId = toast.loading('Downloading certificate...');
 
       const response = await axios.get(
-        `http://localhost:5000/api/certificates/${certificate._id}/download`,
+        `${API_BASE_URL}/api/certificates/${certificate._id}/download`,
         {
           headers: { Authorization: `Bearer ${token}` },
           responseType: 'blob'
@@ -184,7 +186,7 @@ const Results = () => {
       <div className="max-w-4xl mx-auto px-4">
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-6">Quiz Results</h1>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div className="bg-gray-50 p-6 rounded-lg">
               <h2 className="text-xl font-semibold mb-4">Summary</h2>
@@ -207,7 +209,7 @@ const Results = () => {
                 </p>
               </div>
             </div>
-            
+
             <div className="bg-gray-50 p-6 rounded-lg">
               <h2 className="text-xl font-semibold mb-4">Performance</h2>
               <div className="w-full h-64">
@@ -246,7 +248,7 @@ const Results = () => {
                     disabled:cursor-not-allowed"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
                       d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                   </svg>
                   Download Certificate
@@ -261,35 +263,32 @@ const Results = () => {
             {quizResult.questions.map((question, index) => (
               <div
                 key={question._id}
-                className={`p-6 rounded-lg border ${
-                  question.isCorrect 
-                    ? 'bg-green-50 border-green-200' 
+                className={`p-6 rounded-lg border ${question.isCorrect
+                    ? 'bg-green-50 border-green-200'
                     : 'bg-red-50 border-red-200'
-                }`}
+                  }`}
               >
                 <div className="flex items-start gap-4">
-                  <span 
-                    className={`flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full ${
-                      question.isCorrect 
-                        ? 'bg-green-100 text-green-800' 
+                  <span
+                    className={`flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full ${question.isCorrect
+                        ? 'bg-green-100 text-green-800'
                         : 'bg-red-100 text-red-800'
-                    }`}
+                      }`}
                   >
                     {index + 1}
                   </span>
                   <div className="flex-grow">
                     <p className="font-medium mb-3">{question.question.questionText}</p>
                     <div className="space-y-2">
-                      <p className={`text-sm ${
-                        question.selectedAnswer === -1 
-                          ? 'text-yellow-600' 
-                          : question.isCorrect 
-                            ? 'text-green-600' 
+                      <p className={`text-sm ${question.selectedAnswer === -1
+                          ? 'text-yellow-600'
+                          : question.isCorrect
+                            ? 'text-green-600'
                             : 'text-red-600'
-                      }`}>
+                        }`}>
                         <span className="font-medium">Your Answer:</span>{' '}
-                        {question.selectedAnswer === -1 
-                          ? 'Not answered' 
+                        {question.selectedAnswer === -1
+                          ? 'Not answered'
                           : question.question.options[question.selectedAnswer]
                         }
                       </p>

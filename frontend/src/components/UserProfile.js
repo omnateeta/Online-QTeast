@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 const UserProfile = () => {
   const { user, updateUser } = useAuth();
   const [profileData, setProfileData] = useState({
@@ -22,7 +24,7 @@ const UserProfile = () => {
       try {
         const token = localStorage.getItem('token');
         console.log('Fetching profile for user:', user._id); // Debug log
-        const response = await axios.get(`http://localhost:5000/api/user/profile/${user._id}`, {
+        const response = await axios.get(`${API_BASE_URL}/api/user/profile/${user._id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setProfileData({
@@ -74,7 +76,7 @@ const UserProfile = () => {
     try {
       const token = localStorage.getItem('token');
       console.log('Updating profile for user:', user._id); // Debug log
-      
+
       const formData = new FormData();
       formData.append('fullName', profileData.fullName);
       formData.append('phone', profileData.phone);
@@ -86,7 +88,7 @@ const UserProfile = () => {
       }
 
       const response = await axios.put(
-        `http://localhost:5000/api/user/profile/${user._id}`,
+        `${API_BASE_URL}/api/user/profile/${user._id}`,
         formData,
         {
           headers: {
@@ -145,7 +147,7 @@ const UserProfile = () => {
                 </div>
               )}
             </div>
-            
+
             <label className="absolute bottom-0 right-0 bg-primary-600 text-white p-2 rounded-full cursor-pointer hover:bg-primary-700 transition-colors">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />

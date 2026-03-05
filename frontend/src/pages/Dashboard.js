@@ -4,6 +4,8 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import { Bar } from 'react-chartjs-2';
+
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -50,41 +52,37 @@ const advertisementImages = [
 ];
 
 const QuizCard = ({ category, onStart }) => (
-  <div className={`${
-    category === 'Aptitude' ? 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200' :
-    category === 'Logical Reasoning' ? 'bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200' :
-    category === 'Technical' ? 'bg-gradient-to-br from-green-50 to-green-100 border-green-200' :
-    'bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200'
-  } rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300 border`}>
+  <div className={`${category === 'Aptitude' ? 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200' :
+      category === 'Logical Reasoning' ? 'bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200' :
+        category === 'Technical' ? 'bg-gradient-to-br from-green-50 to-green-100 border-green-200' :
+          'bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200'
+    } rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300 border`}>
     <div className="flex items-center justify-center mb-4">
-      <img 
-        src={categoryImages[category]} 
+      <img
+        src={categoryImages[category]}
         alt={category}
         className="w-16 h-16 object-contain"
       />
     </div>
-    <h3 className={`text-xl font-semibold mb-4 text-center ${
-      category === 'Aptitude' ? 'text-blue-700' :
-      category === 'Logical Reasoning' ? 'text-purple-700' :
-      category === 'Technical' ? 'text-green-700' :
-      'text-orange-700'
-    }`}>{category}</h3>
-    <p className={`mb-4 text-center ${
-      category === 'Aptitude' ? 'text-blue-600' :
-      category === 'Logical Reasoning' ? 'text-purple-600' :
-      category === 'Technical' ? 'text-green-600' :
-      'text-orange-600'
-    }`}>
+    <h3 className={`text-xl font-semibold mb-4 text-center ${category === 'Aptitude' ? 'text-blue-700' :
+        category === 'Logical Reasoning' ? 'text-purple-700' :
+          category === 'Technical' ? 'text-green-700' :
+            'text-orange-700'
+      }`}>{category}</h3>
+    <p className={`mb-4 text-center ${category === 'Aptitude' ? 'text-blue-600' :
+        category === 'Logical Reasoning' ? 'text-purple-600' :
+          category === 'Technical' ? 'text-green-600' :
+            'text-orange-600'
+      }`}>
       Test your knowledge in {category.toLowerCase()} with our comprehensive quiz.
     </p>
     <button
       onClick={() => onStart(category)}
-      className={`w-full py-2 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 text-white ${
-        category === 'Aptitude' ? 'bg-blue-500 hover:bg-blue-600 focus:ring-blue-400' :
-        category === 'Logical Reasoning' ? 'bg-purple-500 hover:bg-purple-600 focus:ring-purple-400' :
-        category === 'Technical' ? 'bg-green-500 hover:bg-green-600 focus:ring-green-400' :
-        'bg-orange-500 hover:bg-orange-600 focus:ring-orange-400'
-      }`}
+      className={`w-full py-2 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 text-white ${category === 'Aptitude' ? 'bg-blue-500 hover:bg-blue-600 focus:ring-blue-400' :
+          category === 'Logical Reasoning' ? 'bg-purple-500 hover:bg-purple-600 focus:ring-purple-400' :
+            category === 'Technical' ? 'bg-green-500 hover:bg-green-600 focus:ring-green-400' :
+              'bg-orange-500 hover:bg-orange-600 focus:ring-orange-400'
+        }`}
     >
       Start Quiz
     </button>
@@ -118,7 +116,7 @@ const Dashboard = () => {
 
         console.log('Fetching analytics for user:', userId);
         const response = await axios.get(
-          `http://localhost:5000/api/quizzes/analytics/${userId}`,
+          `${API_BASE_URL}/api/quizzes/analytics/${userId}`,
           {
             headers: { Authorization: `Bearer ${token}` }
           }
@@ -151,7 +149,7 @@ const Dashboard = () => {
       navigate('/login', { state: { from: `/quiz/${category}` } });
       return;
     }
-    navigate(`/quiz/${category}`, { 
+    navigate(`/quiz/${category}`, {
       state: { fromDashboard: true },
       replace: true
     });
@@ -202,7 +200,7 @@ const Dashboard = () => {
     datasets: [
       {
         label: 'Average Score',
-        data: categories.map(category => 
+        data: categories.map(category =>
           analytics?.categoryWise[category]?.averageScore?.toFixed(1) || 0
         ),
         backgroundColor: [
@@ -225,14 +223,14 @@ const Dashboard = () => {
 
   const getBestPerformance = (activity) => {
     if (!activity || activity.length === 0) return null;
-    return activity.reduce((best, current) => 
+    return activity.reduce((best, current) =>
       current.score > best.score ? current : best
     );
   };
 
   const getLowestPerformance = (activity) => {
     if (!activity || activity.length === 0) return null;
-    return activity.reduce((lowest, current) => 
+    return activity.reduce((lowest, current) =>
       current.score < lowest.score ? current : lowest
     );
   };
@@ -368,7 +366,7 @@ const Dashboard = () => {
               Score: {analytics?.recentActivity?.[0]?.score || 0}%
             </p>
             <p className="text-sm text-purple-600 mt-2">
-              {analytics?.recentActivity?.[0]?.date 
+              {analytics?.recentActivity?.[0]?.date
                 ? new Date(analytics.recentActivity[0].date).toLocaleDateString()
                 : 'No attempts yet'}
             </p>
@@ -451,7 +449,7 @@ const Dashboard = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {analytics?.recentActivity?.filter(activity => activity.score >= 50).slice(0, 3).map((activity) => (
-            <div 
+            <div
               key={activity._id}
               className="bg-white rounded-lg shadow-md p-6 transform hover:scale-105 transition-all duration-300"
             >
@@ -475,7 +473,7 @@ const Dashboard = () => {
                   className="w-full mt-4 bg-amber-100 text-amber-800 px-4 py-2 rounded-lg hover:bg-amber-200 transition-colors flex items-center justify-center gap-2"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                   </svg>
                   Download Certificate
                 </button>
@@ -497,9 +495,9 @@ const Dashboard = () => {
           {advertisementImages.map((ad, index) => (
             <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition-transform duration-300">
               <div className="h-48 overflow-hidden">
-                <img 
-                  src={ad.url} 
-                  alt={ad.title} 
+                <img
+                  src={ad.url}
+                  alt={ad.title}
                   className="w-full h-full object-cover hover:opacity-90 transition-opacity"
                 />
               </div>

@@ -4,6 +4,8 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-hot-toast';
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 const Certificates = () => {
   const { user } = useAuth();
   const [certificates, setCertificates] = useState([]);
@@ -20,7 +22,7 @@ const Certificates = () => {
 
         // Get user's certificates directly from the certificates endpoint
         const certificatesResponse = await axios.get(
-          'http://localhost:5000/api/certificates/user',
+          `${API_BASE_URL}/api/certificates/user`,
           {
             headers: { Authorization: `Bearer ${token}` }
           }
@@ -29,7 +31,7 @@ const Certificates = () => {
         if (!certificatesResponse.data || certificatesResponse.data.length === 0) {
           // If no certificates found, try to get from quiz attempts
           const analyticsResponse = await axios.get(
-            `http://localhost:5000/api/quizzes/analytics/${user.id}`,
+            `${API_BASE_URL}/api/quizzes/analytics/${user.id}`,
             {
               headers: { Authorization: `Bearer ${token}` }
             }
@@ -45,7 +47,7 @@ const Certificates = () => {
               date: activity.date,
               questionsAnswered: activity.questionsAnswered,
               correctAnswers: activity.correctAnswers,
-              certificateNumber: `CERT-${new Date(activity.date).toISOString().slice(0,7)}-${String(activity.questionsAnswered).padStart(4, '0')}`
+              certificateNumber: `CERT-${new Date(activity.date).toISOString().slice(0, 7)}-${String(activity.questionsAnswered).padStart(4, '0')}`
             }));
 
           setCertificates(passingAttempts);
@@ -75,7 +77,7 @@ const Certificates = () => {
 
       // First ensure the certificate exists
       const certResponse = await axios.get(
-        `http://localhost:5000/api/certificates/quiz/${quizId}`,
+        `${API_BASE_URL}/api/certificates/quiz/${quizId}`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
@@ -87,7 +89,7 @@ const Certificates = () => {
 
       // Now download the certificate PDF
       const response = await axios.get(
-        `http://localhost:5000/api/certificates/${certResponse.data._id}/download`,
+        `${API_BASE_URL}/api/certificates/${certResponse.data._id}/download`,
         {
           headers: { Authorization: `Bearer ${token}` },
           responseType: 'blob'
@@ -128,7 +130,7 @@ const Certificates = () => {
 
       // First ensure the certificate exists
       const certResponse = await axios.get(
-        `http://localhost:5000/api/certificates/quiz/${quizId}`,
+        `${API_BASE_URL}/api/certificates/quiz/${quizId}`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
@@ -140,7 +142,7 @@ const Certificates = () => {
 
       // Now get the certificate PDF
       const response = await axios.get(
-        `http://localhost:5000/api/certificates/${certResponse.data._id}/download`,
+        `${API_BASE_URL}/api/certificates/${certResponse.data._id}/download`,
         {
           headers: { Authorization: `Bearer ${token}` },
           responseType: 'blob'
@@ -150,7 +152,7 @@ const Certificates = () => {
       // Create object URL for viewing
       const blob = new Blob([response.data], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
-      
+
       // Open in new window
       const newWindow = window.open('', '_blank');
       if (newWindow) {

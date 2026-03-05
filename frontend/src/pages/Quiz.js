@@ -4,6 +4,8 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 // Shuffle array function using Fisher-Yates algorithm
 const shuffleArray = (array) => {
   const shuffled = [...array];
@@ -19,7 +21,7 @@ const Quiz = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
   const questionContainerRef = useRef(null);
-  
+
   const [questions, setQuestions] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState([]);
@@ -53,7 +55,7 @@ const Quiz = () => {
       }
 
       const response = await axios.get(
-        `http://localhost:5000/api/quizzes/${category}`,
+        `${API_BASE_URL}/api/quizzes/${category}`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
@@ -94,7 +96,7 @@ const Quiz = () => {
       try {
         if (!isAuthenticated || !user) {
           const returnTo = `/quiz/${category}`;
-          navigate('/login', { 
+          navigate('/login', {
             state: { from: returnTo },
             replace: true
           });
@@ -114,7 +116,7 @@ const Quiz = () => {
 
         // Fetch questions
         const response = await axios.get(
-          `http://localhost:5000/api/quizzes/${category}`,
+          `${API_BASE_URL}/api/quizzes/${category}`,
           {
             headers: { Authorization: `Bearer ${token}` }
           }
@@ -134,10 +136,10 @@ const Quiz = () => {
         const questionsWithShuffledOptions = shuffledQuestions.map(question => {
           const originalOptions = [...question.options];
           const shuffledOptions = shuffleArray(originalOptions);
-          
+
           // Create mapping from shuffled index to original index
           const mapping = shuffledOptions.map(option => originalOptions.indexOf(option));
-          
+
           return {
             ...question,
             options: shuffledOptions,
@@ -150,21 +152,21 @@ const Quiz = () => {
 
         // Remove mappings from questions before setting state
         const finalQuestions = questionsWithShuffledOptions.map(({ optionMapping, ...q }) => q);
-        
+
         setQuestions(finalQuestions);
         setAnswers(new Array(finalQuestions.length).fill(null));
         setError(null);
       } catch (err) {
         console.error('Failed to initialize quiz:', err);
         let errorMessage = err.response?.data?.message || err.message || 'Failed to load quiz';
-        
+
         if (err.response?.status === 429) {
           setIsAttemptLimitReached(true);
           setAttemptsLeft(0);
           setNextAttemptTime(err.response.data.nextAttemptTime);
           navigate('/dashboard');
         }
-        
+
         setError(errorMessage);
         toast.error(errorMessage);
       } finally {
@@ -181,7 +183,7 @@ const Quiz = () => {
 
     try {
       setIsSubmitting(true);
-      
+
       // Check attempt limits before submitting
       const canAttempt = await checkAttemptLimits();
       if (!canAttempt) {
@@ -221,10 +223,10 @@ const Quiz = () => {
 
       try {
         const response = await axios.post(
-          'http://localhost:5000/api/quizzes/submit',
+          `${API_BASE_URL}/api/quizzes/submit`,
           submission,
           {
-            headers: { 
+            headers: {
               Authorization: `Bearer ${token}`,
               'Content-Type': 'application/json'
             }
@@ -245,9 +247,9 @@ const Quiz = () => {
 
           toast.success('Quiz submitted successfully!');
           // Save quiz data and navigate to performance page
-          navigate('/performance', { 
+          navigate('/performance', {
             replace: true,
-            state: { 
+            state: {
               quizId: response.data.result.quizId,
               fromQuiz: true,
               category: category,
@@ -262,7 +264,7 @@ const Quiz = () => {
         console.error('Submission error:', submitError);
         const errorMessage = submitError.response?.data?.message || submitError.message || 'Failed to submit quiz';
         toast.error(errorMessage);
-        
+
         // Handle different error cases
         if (submitError.response?.status === 401) {
           // Token expired or invalid, store current location and redirect to login
@@ -434,11 +436,10 @@ const Quiz = () => {
                 key={index}
                 onClick={() => handleAnswer(index)}
                 disabled={isSubmitting}
-                className={`w-full text-left p-4 rounded-lg border transition-colors ${
-                  answers[currentQuestion] === index
+                className={`w-full text-left p-4 rounded-lg border transition-colors ${answers[currentQuestion] === index
                     ? 'border-primary-500 bg-primary-50'
                     : 'border-gray-200 hover:border-primary-500'
-                } ${isSubmitting ? 'cursor-not-allowed opacity-60' : ''}`}
+                  } ${isSubmitting ? 'cursor-not-allowed opacity-60' : ''}`}
               >
                 {option}
               </button>
@@ -451,11 +452,10 @@ const Quiz = () => {
           <button
             onClick={handlePrevious}
             disabled={currentQuestion === 0 || isSubmitting}
-            className={`px-6 py-2 rounded-md ${
-              currentQuestion === 0 || isSubmitting
+            className={`px-6 py-2 rounded-md ${currentQuestion === 0 || isSubmitting
                 ? 'bg-gray-300 cursor-not-allowed'
                 : 'bg-primary-600 hover:bg-primary-700'
-            } text-white`}
+              } text-white`}
           >
             Previous
           </button>
@@ -463,11 +463,10 @@ const Quiz = () => {
             <button
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className={`px-6 py-2 rounded-md ${
-                isSubmitting 
+              className={`px-6 py-2 rounded-md ${isSubmitting
                   ? 'bg-gray-400 cursor-not-allowed'
                   : 'bg-green-600 hover:bg-green-700'
-              } text-white flex items-center justify-center min-w-[120px]`}
+                } text-white flex items-center justify-center min-w-[120px]`}
             >
               {isSubmitting ? 'Submitting...' : 'Submit Quiz'}
             </button>
@@ -475,11 +474,10 @@ const Quiz = () => {
             <button
               onClick={handleNext}
               disabled={isSubmitting}
-              className={`px-6 py-2 rounded-md ${
-                isSubmitting
+              className={`px-6 py-2 rounded-md ${isSubmitting
                   ? 'bg-gray-300 cursor-not-allowed'
                   : 'bg-primary-600 hover:bg-primary-700'
-              } text-white`}
+                } text-white`}
             >
               Next
             </button>

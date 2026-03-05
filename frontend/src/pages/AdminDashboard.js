@@ -14,6 +14,8 @@ import {
 } from 'chart.js';
 import { Pie, Bar } from 'react-chartjs-2';
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 ChartJS.register(
   ArcElement,
   CategoryScale,
@@ -56,10 +58,10 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${token}` };
-      
+
       const [questionsRes, usersRes] = await Promise.all([
-        axios.get('http://localhost:5000/api/admin/questions', { headers }),
-        axios.get('http://localhost:5000/api/admin/users', { headers })
+        axios.get(`${API_BASE_URL}/api/admin/questions`, { headers }),
+        axios.get(`${API_BASE_URL}/api/admin/users`, { headers })
       ]);
 
       setQuestions(questionsRes.data);
@@ -75,7 +77,7 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get(
-        `http://localhost:5000/api/admin/users/${userId}/analytics`,
+        `${API_BASE_URL}/api/admin/users/${userId}/analytics`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setUserAnalytics(response.data);
@@ -105,10 +107,10 @@ const AdminDashboard = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:5000/api/admin/questions', formData, {
+      await axios.post(`${API_BASE_URL}/api/admin/questions`, formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      
+
       setFormData({
         questionText: '',
         options: ['', '', '', ''],
@@ -126,7 +128,7 @@ const AdminDashboard = () => {
   const handleDelete = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/admin/questions/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/admin/questions/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchData();
@@ -151,10 +153,10 @@ const AdminDashboard = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`http://localhost:5000/api/admin/questions/${editingQuestion}`, formData, {
+      await axios.put(`${API_BASE_URL}/api/admin/questions/${editingQuestion}`, formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      
+
       setFormData({
         questionText: '',
         options: ['', '', '', ''],
@@ -204,7 +206,7 @@ const AdminDashboard = () => {
   const categoryData = {
     labels: categories,
     datasets: [{
-      data: categories.map(category => 
+      data: categories.map(category =>
         questions.filter(q => q.category === category).length
       ),
       backgroundColor: [
@@ -226,7 +228,7 @@ const AdminDashboard = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
-      
+
       {/* Analytics Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <div className="bg-purple-50 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
@@ -235,7 +237,7 @@ const AdminDashboard = () => {
         </div>
         <div className="bg-indigo-50 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
           <h2 className="text-xl font-semibold mb-4 text-indigo-800">User Performance</h2>
-          <Bar 
+          <Bar
             data={userPerformanceData}
             options={{
               responsive: true,
@@ -286,11 +288,10 @@ const AdminDashboard = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      user.averageScore >= 80 ? 'bg-green-100 text-green-800' :
-                      user.averageScore >= 60 ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-red-100 text-red-800'
-                    }`}>
+                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${user.averageScore >= 80 ? 'bg-green-100 text-green-800' :
+                        user.averageScore >= 60 ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-red-100 text-red-800'
+                      }`}>
                       {user.averageScore.toFixed(1)}%
                     </span>
                   </td>
@@ -330,11 +331,10 @@ const AdminDashboard = () => {
                         <p className="text-sm text-amber-800">Attempts</p>
                         <p className="text-lg font-medium text-amber-900">{stats.totalAttempts}</p>
                       </div>
-                      <div className={`p-3 rounded-lg ${
-                        stats.averageScore >= 80 ? 'bg-green-100' :
-                        stats.averageScore >= 60 ? 'bg-yellow-100' :
-                        'bg-red-100'
-                      }`}>
+                      <div className={`p-3 rounded-lg ${stats.averageScore >= 80 ? 'bg-green-100' :
+                          stats.averageScore >= 60 ? 'bg-yellow-100' :
+                            'bg-red-100'
+                        }`}>
                         <p className="text-sm text-amber-800">Average Score</p>
                         <p className="text-lg font-medium text-amber-900">{stats.averageScore.toFixed(1)}%</p>
                       </div>
@@ -364,11 +364,10 @@ const AdminDashboard = () => {
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className={`text-lg font-medium ${
-                          attempt.totalScore >= 80 ? 'text-green-600' :
-                          attempt.totalScore >= 60 ? 'text-yellow-600' :
-                          'text-red-600'
-                        }`}>
+                        <p className={`text-lg font-medium ${attempt.totalScore >= 80 ? 'text-green-600' :
+                            attempt.totalScore >= 60 ? 'text-yellow-600' :
+                              'text-red-600'
+                          }`}>
                           {attempt.totalScore.toFixed(1)}%
                         </p>
                         <p className="text-sm text-amber-600">
@@ -506,12 +505,11 @@ const AdminDashboard = () => {
                     ))}
                   </ul>
                   <p className="text-sm text-gray-600 mt-2">
-                    Category: <span className="font-medium">{question.category}</span> | 
-                    Difficulty: <span className={`font-medium ${
-                      question.difficulty === 'Easy' ? 'text-green-600' :
-                      question.difficulty === 'Medium' ? 'text-yellow-600' :
-                      'text-red-600'
-                    }`}>{question.difficulty}</span>
+                    Category: <span className="font-medium">{question.category}</span> |
+                    Difficulty: <span className={`font-medium ${question.difficulty === 'Easy' ? 'text-green-600' :
+                        question.difficulty === 'Medium' ? 'text-yellow-600' :
+                          'text-red-600'
+                      }`}>{question.difficulty}</span>
                   </p>
                   {question.explanation && (
                     <p className="text-sm text-gray-600 mt-1">

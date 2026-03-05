@@ -18,6 +18,8 @@ import {
 import { Bar } from 'react-chartjs-2';
 import { toast } from 'react-hot-toast';
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -148,7 +150,7 @@ const Performance = () => {
   const certificateRef = useRef(null);
   const [certificateImage, setCertificateImage] = useState(null);
   const [showShareModal, setShowShareModal] = useState(false);
-  
+
   // Get quiz submission data if coming from quiz
   const quizSubmissionData = location.state;
 
@@ -243,7 +245,7 @@ const Performance = () => {
 
         // Fetch analytics
         const analyticsResponse = await axios.get(
-          `http://localhost:5000/api/quizzes/analytics/${user.id}`,
+          `${API_BASE_URL}/api/quizzes/analytics/${user.id}`,
           {
             headers: { Authorization: `Bearer ${token}` }
           }
@@ -274,7 +276,7 @@ const Performance = () => {
 
       // First get the certificate ID for this quiz
       const certResponse = await axios.get(
-        `http://localhost:5000/api/certificates/quiz/${quizId}`,
+        `${API_BASE_URL}/api/certificates/quiz/${quizId}`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
@@ -286,7 +288,7 @@ const Performance = () => {
 
       // Now download the certificate PDF
       const response = await axios.get(
-        `http://localhost:5000/api/certificates/${certResponse.data._id}/download`,
+        `${API_BASE_URL}/api/certificates/${certResponse.data._id}/download`,
         {
           headers: { Authorization: `Bearer ${token}` },
           responseType: 'blob'
@@ -327,7 +329,7 @@ const Performance = () => {
   }
 
   const categories = ['Aptitude', 'Logical Reasoning', 'Technical', 'General Knowledge'];
-  
+
   const chartData = {
     labels: categories,
     datasets: [
@@ -361,7 +363,7 @@ const Performance = () => {
       <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-semibold">Share Certificate</h3>
-          <button 
+          <button
             onClick={() => setShowShareModal(false)}
             className="text-gray-500 hover:text-gray-700"
           >
@@ -376,7 +378,7 @@ const Performance = () => {
             className="flex items-center justify-center space-x-2 p-3 rounded-lg bg-[#0077B5] text-white hover:bg-[#006399] transition-colors"
           >
             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+              <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
             </svg>
             <span>LinkedIn</span>
           </button>
@@ -385,7 +387,7 @@ const Performance = () => {
             className="flex items-center justify-center space-x-2 p-3 rounded-lg bg-[#1DA1F2] text-white hover:bg-[#1a91da] transition-colors"
           >
             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+              <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
             </svg>
             <span>Twitter</span>
           </button>
@@ -394,7 +396,7 @@ const Performance = () => {
             className="flex items-center justify-center space-x-2 p-3 rounded-lg bg-[#1877F2] text-white hover:bg-[#166fe5] transition-colors"
           >
             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
             </svg>
             <span>Facebook</span>
           </button>
@@ -452,12 +454,12 @@ const Performance = () => {
           {quizSubmissionData.score > 50 && (
             <>
               {/* Certificate Template */}
-              <div 
-                ref={certificateRef} 
+              <div
+                ref={certificateRef}
                 className="bg-white border-8 border-double border-gray-300 p-8 rounded-lg shadow-lg max-w-4xl mx-auto"
-                style={{ 
-                  aspectRatio: '1.414', 
-                  backgroundImage: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)' 
+                style={{
+                  aspectRatio: '1.414',
+                  backgroundImage: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)'
                 }}
               >
                 <div className="text-center space-y-6">
@@ -529,7 +531,7 @@ const Performance = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {analytics?.recentActivity?.filter(activity => activity.score >= 50).slice(0, 3).map((activity) => (
-            <div 
+            <div
               key={activity._id}
               className="bg-white rounded-lg shadow-md p-6 transform hover:scale-105 transition-all duration-300"
             >
@@ -549,11 +551,11 @@ const Performance = () => {
                   Questions: {activity.correctAnswers} / {activity.questionsAnswered} correct
                 </p>
                 <button
-                  onClick={() => handleDownloadCertificate(activity._id, `CERT-${new Date(activity.date).toISOString().slice(0,7)}-${String(activity.questionsAnswered).padStart(4, '0')}`)}
+                  onClick={() => handleDownloadCertificate(activity._id, `CERT-${new Date(activity.date).toISOString().slice(0, 7)}-${String(activity.questionsAnswered).padStart(4, '0')}`)}
                   className="w-full mt-4 bg-amber-100 text-amber-800 px-4 py-2 rounded-lg hover:bg-amber-200 transition-colors flex items-center justify-center gap-2"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                   </svg>
                   Download Certificate
                 </button>
@@ -625,8 +627,8 @@ const Performance = () => {
                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
                       ${activity.category === 'Aptitude' ? 'bg-red-100 text-red-800' :
                         activity.category === 'Logical Reasoning' ? 'bg-blue-100 text-blue-800' :
-                        activity.category === 'Technical' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-green-100 text-green-800'
+                          activity.category === 'Technical' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-green-100 text-green-800'
                       }`}>
                       {activity.category}
                     </span>
@@ -635,7 +637,7 @@ const Performance = () => {
                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
                       ${activity.score >= 80 ? 'bg-green-100 text-green-800' :
                         activity.score >= 60 ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-red-100 text-red-800'
+                          'bg-red-100 text-red-800'
                       }`}>
                       {activity.score.toFixed(1)}%
                     </span>
@@ -645,7 +647,7 @@ const Performance = () => {
                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
                       ${(activity.correctAnswers / activity.questionsAnswered) >= 0.8 ? 'bg-green-100 text-green-800' :
                         (activity.correctAnswers / activity.questionsAnswered) >= 0.6 ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-red-100 text-red-800'
+                          'bg-red-100 text-red-800'
                       }`}>
                       {activity.correctAnswers}
                     </span>
@@ -660,62 +662,55 @@ const Performance = () => {
       {/* Category Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {categories.map(category => (
-          <div key={category} className={`rounded-lg shadow-md p-6 ${
-            category === 'Aptitude' ? 'bg-gradient-to-br from-red-50 to-red-100' :
-            category === 'Logical Reasoning' ? 'bg-gradient-to-br from-blue-50 to-blue-100' :
-            category === 'Technical' ? 'bg-gradient-to-br from-yellow-50 to-yellow-100' :
-            'bg-gradient-to-br from-green-50 to-green-100'
-          }`}>
-            <h3 className={`text-xl font-semibold mb-4 ${
-              category === 'Aptitude' ? 'text-red-800' :
-              category === 'Logical Reasoning' ? 'text-blue-800' :
-              category === 'Technical' ? 'text-yellow-800' :
-              'text-green-800'
-            }`}>{category}</h3>
+          <div key={category} className={`rounded-lg shadow-md p-6 ${category === 'Aptitude' ? 'bg-gradient-to-br from-red-50 to-red-100' :
+              category === 'Logical Reasoning' ? 'bg-gradient-to-br from-blue-50 to-blue-100' :
+                category === 'Technical' ? 'bg-gradient-to-br from-yellow-50 to-yellow-100' :
+                  'bg-gradient-to-br from-green-50 to-green-100'
+            }`}>
+            <h3 className={`text-xl font-semibold mb-4 ${category === 'Aptitude' ? 'text-red-800' :
+                category === 'Logical Reasoning' ? 'text-blue-800' :
+                  category === 'Technical' ? 'text-yellow-800' :
+                    'text-green-800'
+              }`}>{category}</h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center bg-white bg-opacity-60 p-3 rounded-lg">
-                <span className={`font-medium ${
-                  category === 'Aptitude' ? 'text-red-700' :
-                  category === 'Logical Reasoning' ? 'text-blue-700' :
-                  category === 'Technical' ? 'text-yellow-700' :
-                  'text-green-700'
-                }`}>Total Attempts:</span>
+                <span className={`font-medium ${category === 'Aptitude' ? 'text-red-700' :
+                    category === 'Logical Reasoning' ? 'text-blue-700' :
+                      category === 'Technical' ? 'text-yellow-700' :
+                        'text-green-700'
+                  }`}>Total Attempts:</span>
                 <span className="font-medium">{analytics?.categoryWise[category]?.totalAttempts || 0}</span>
               </div>
               <div className="flex justify-between items-center bg-white bg-opacity-60 p-3 rounded-lg">
-                <span className={`font-medium ${
-                  category === 'Aptitude' ? 'text-red-700' :
-                  category === 'Logical Reasoning' ? 'text-blue-700' :
-                  category === 'Technical' ? 'text-yellow-700' :
-                  'text-green-700'
-                }`}>Average Score:</span>
+                <span className={`font-medium ${category === 'Aptitude' ? 'text-red-700' :
+                    category === 'Logical Reasoning' ? 'text-blue-700' :
+                      category === 'Technical' ? 'text-yellow-700' :
+                        'text-green-700'
+                  }`}>Average Score:</span>
                 <span className="font-medium">{(analytics?.categoryWise[category]?.averageScore || 0).toFixed(1)}%</span>
               </div>
               <div className="flex justify-between items-center bg-white bg-opacity-60 p-3 rounded-lg">
-                <span className={`font-medium ${
-                  category === 'Aptitude' ? 'text-red-700' :
-                  category === 'Logical Reasoning' ? 'text-blue-700' :
-                  category === 'Technical' ? 'text-yellow-700' :
-                  'text-green-700'
-                }`}>Best Score:</span>
+                <span className={`font-medium ${category === 'Aptitude' ? 'text-red-700' :
+                    category === 'Logical Reasoning' ? 'text-blue-700' :
+                      category === 'Technical' ? 'text-yellow-700' :
+                        'text-green-700'
+                  }`}>Best Score:</span>
                 <span className="font-medium">{(analytics?.categoryWise[category]?.bestScore || 0).toFixed(1)}%</span>
               </div>
               <div className="flex justify-between items-center bg-white bg-opacity-60 p-3 rounded-lg">
-                <span className={`font-medium ${
-                  category === 'Aptitude' ? 'text-red-700' :
-                  category === 'Logical Reasoning' ? 'text-blue-700' :
-                  category === 'Technical' ? 'text-yellow-700' :
-                  'text-green-700'
-                }`}>Total Questions:</span>
+                <span className={`font-medium ${category === 'Aptitude' ? 'text-red-700' :
+                    category === 'Logical Reasoning' ? 'text-blue-700' :
+                      category === 'Technical' ? 'text-yellow-700' :
+                        'text-green-700'
+                  }`}>Total Questions:</span>
                 <span className="font-medium">{analytics?.categoryWise[category]?.totalQuestions || 0}</span>
               </div>
               <div className="flex justify-between items-center bg-white bg-opacity-60 p-3 rounded-lg">
-                <span className={`font-medium ${
-                  category === 'Aptitude' ? 'text-red-700' :
-                  category === 'Logical Reasoning' ? 'text-blue-700' :
-                  category === 'Technical' ? 'text-yellow-700' :
-                  'text-green-700'
-                }`}>Correct Answers:</span>
+                <span className={`font-medium ${category === 'Aptitude' ? 'text-red-700' :
+                    category === 'Logical Reasoning' ? 'text-blue-700' :
+                      category === 'Technical' ? 'text-yellow-700' :
+                        'text-green-700'
+                  }`}>Correct Answers:</span>
                 <span className="font-medium">{analytics?.categoryWise[category]?.correctAnswers || 0}</span>
               </div>
             </div>
