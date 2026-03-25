@@ -5,7 +5,7 @@
 
 - User authentication (Register, Login, Forgot Password)
 - MCQ quizzes categorized by topics
-- Real-time quiz evaluation
+- Real-time quiz evaluation  
 - Performance analytics dashboard
 - Category-wise score analysis
 - Responsive UI with modern design
