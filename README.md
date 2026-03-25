@@ -109,3 +109,6 @@ online-quiz-portal/
 
 ## Contributing
 Feel free to submit issues and enhancement requests..
+
+<img width="1366" height="768" alt="Screenshot (37)" src="https://github.com/user-attachments/assets/6f0336ab-9d63-446b-a73f-efd6b472466f" />
+
